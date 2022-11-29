@@ -12,7 +12,6 @@ public class TaskOne {
         while (true) {
             System.out.println("Введите дробное число:");
             Scanner sc = new Scanner(System.in);
-
             try {
                 float userFloat = sc.nextFloat();
                 System.out.println(userFloat);
