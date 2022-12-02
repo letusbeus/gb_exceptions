@@ -24,13 +24,16 @@ package ru.letusbeus.ExceptionsHomeworkThree;
 пользователь должен увидеть стектрейс ошибки.
  */
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
+//import java.io.FileWriter;
+//import java.io.IOException;
+//import java.util.Arrays;
+
 import java.util.Scanner;
 
 public class Services {
     static String[] personsData = checkInputData();
+    static String[] patronymics = {"ович", "овна", "евич", "евна", "ич", "ична"};
+    static String[] surnames = {"ов", "ова", "ев", "ева", "ин", "ина", "ын", "ына"};
 
     public static void createPerson() {
         Person human = new Person();
@@ -39,48 +42,90 @@ public class Services {
                 human.setBirthDate(personsDatum);
             } else if (personsDatum.chars().allMatch(Character::isDigit)) {
                 human.setPhoneNumber(personsDatum);
-            } else if (
-                    (personsDatum.equalsIgnoreCase("Ж")) ||
-                            (personsDatum.equalsIgnoreCase("М"))) {
+            } else if ((personsDatum.equalsIgnoreCase("Ж")) ||
+                    (personsDatum.equalsIgnoreCase("М"))) {
                 human.setGender(personsDatum);
             } else if ((personsDatum.length() > 1) && (personsDatum.chars().allMatch(Character::isLetter))) {
-                if (personsDatum.endsWith("ович") ||
-                        (personsDatum.endsWith("овна")) ||
-                        (personsDatum.endsWith("евич")) ||
-                        (personsDatum.endsWith("евна")) ||
-                        (personsDatum.endsWith("ич")) ||
-                        (personsDatum.endsWith("ична"))) {
-                    human.setLastName(personsDatum);
-                } else if (personsDatum.endsWith("ов") ||
-                        (personsDatum.endsWith("ова")) ||
-                        (personsDatum.endsWith("ев")) ||
-                        (personsDatum.endsWith("ева")) ||
-                        (personsDatum.endsWith("ин")) ||
-                        (personsDatum.endsWith("ина")) ||
-                        (personsDatum.endsWith("ын")) ||
-                        (personsDatum.endsWith("ына"))) {
-                    human.setSurname(personsDatum);
-                } else human.setName(personsDatum);
+                for (String patronymic : patronymics) {
+                    if (personsDatum.endsWith(patronymic)) {
+                        human.setLastName(personsDatum);
+                    }
+                    break;
+                }
+                for (String surname : surnames) {
+                    if (personsDatum.endsWith(surname)) {
+                        human.setSurname(personsDatum);
+                    }
+                    break;
+                } human.setName(personsDatum);
             }
+//                if (personsDatum.endsWith("ович") ||
+//                        (personsDatum.endsWith("овна")) ||
+//                        (personsDatum.endsWith("евич")) ||
+//                        (personsDatum.endsWith("евна")) ||
+//                        (personsDatum.endsWith("ич")) ||
+//                        (personsDatum.endsWith("ична"))) {
+//                    human.setLastName(personsDatum);
+//            } else if (personsDatum.endsWith("ов") ||
+//                    (personsDatum.endsWith("ова")) ||
+//                    (personsDatum.endsWith("ев")) ||
+//                    (personsDatum.endsWith("ева")) ||
+//                    (personsDatum.endsWith("ин")) ||
+//                    (personsDatum.endsWith("ина")) ||
+//                    (personsDatum.endsWith("ын")) ||
+//                    (personsDatum.endsWith("ына"))) {
+//                human.setSurname(personsDatum);
+//            } else human.setName(personsDatum);
         }
         System.out.println(human);
     }
 
     public static String[] checkInputData() {
-        // 12.12.12 Иванов 999999999 Иванович Иван м
+        System.out.println(
+                "Пожалуйста, введите данные через пробел (Фамилия, Имя, Отчество, пол, дата рождения, номер телефона)"
+        );
         Scanner sc = new Scanner(System.in);
         String[] persons = sc.nextLine().split(" ");
         if (persons.length != 6) {
-            throw new RuntimeException("Incorrect data");
+            throw new RuntimeException("Не хватает данных, пожалуйста, проверьте ввод");
         } else {
+            personsData = persons;
+            return personsData;
+        }
+    }
+
+    public static boolean isSurname(String personDatum) {
+        for (String surname: surnames){
+            if (personDatum.endsWith(surname)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isPatronymic(String personDatum) {
+        for (String patronymic: patronymics){
+            if (personDatum.endsWith(patronymic)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isName(String personDatum) {
+        for (String surname: surnames){
+            for (String patronymic: patronymics) {
+                if (!personDatum.endsWith(surname) && !personDatum.endsWith(patronymic)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+
 ////            System.out.println(Arrays.toString(persons));
 //            try (FileWriter data = new FileWriter(persons[0] + ".txt")) {
 //                data.append(Arrays.toString(persons));
 //            } catch (IOException e) {
 //                throw new RuntimeException(e);
 //            }
-            personsData = persons;
-            return personsData;
-        }
-    }
-}
